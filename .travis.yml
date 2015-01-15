@@ -21,7 +21,6 @@ install:
   - cabal sandbox init
 
   - export CABAL_CONF_URL=http://www.stackage.org/snapshot/$STACKAGEVER/cabal.config
-  - echo Download cabal.config from stackage: $CABAL_CONF_URL
   - curl $CABAL_CONF_URL -O ~/.cabal/cabal.config
   - travis_retry cabal update
   - cabal install -j --disable-documentation -fhttps hakyll
