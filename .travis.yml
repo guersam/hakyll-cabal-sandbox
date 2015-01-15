@@ -1,5 +1,5 @@
 env:
-  - CABALVER=1.22 GHCVER=7.8.4 STACKAGEVER=${TRAVIS_TAG:-lts-1}
+  - CABALVER=1.22 GHCVER=7.8.4 STACKAGEVER=lts/1
 
 cache:
   directories:
@@ -19,7 +19,7 @@ before_install:
 
 install:
   - cabal sandbox init
-  - curl http://www.stackage.org/snapshot/$STACKAGEVER/cabal.config -O ~/.cabal/cabal.config
+  - curl http://www.stackage.org/$STACKAGEVER/cabal.config -O ~/.cabal/cabal.config
   - travis_retry cabal update
   - cabal install -j --disable-documentation -fhttps hakyll
   - cabal install -j --disable-documentation --disable-tests --reorder-goals
