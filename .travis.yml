@@ -1,20 +1,35 @@
 language: haskell
-ghc: 7.8
+
+env:
+  - CABALVER=1.22 GHCVER=7.8.4 STACKAGEVER=nightly-2015-01.15
+
+cache:
+  directories:
+    - $HOME/.ghc
+    - $HOME/.cabal
+
 branches:
   only:
   - master
+
+# Note: the distinction between `before_install` and `install` is not important.
 before_install:
-  - rm .cabal-sandbox.tar.gz
-  #- travis_retry sudo add-apt-repository -y ppa:hvr/ghc
-  #- travis_retry sudo apt-get update
-  #- travis_retry sudo apt-get install --force-yes cabal-install-1.22
-  #- export PATH=~/.cabal/bin:$PATH
+  - travis_retry sudo add-apt-repository -y ppa:hvr/ghc
+  - travis_retry sudo apt-get update
+  - travis_retry sudo apt-get install cabal-install-$CABALVER ghc-$GHCVER # see note about happy/alex
+  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
+
 install:
   - cabal sandbox init
+  - curl http://www.stackage.org/snapshot/$STACKAGEVER/cabal.config -O ~/.cabal/cabal.config
+  - travis_retry cabal update
   - cabal install -j --disable-documentation -fhttps hakyll
   - cabal install -j --disable-documentation --disable-tests --reorder-goals
+
 before_deploy:
+  - rm -f .cabal-sandbox.tar.gz
   - tar czf cabal-sandbox.tar.gz .cabal-sandbox
+
 deploy:
   provider: releases
   api-key: "GITHUB OAUTH TOKEN"
